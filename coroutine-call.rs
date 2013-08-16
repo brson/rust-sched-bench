@@ -1,7 +1,7 @@
-extern mod std;
+extern mod extra;
 
-use core::rt::comm::*;
-use std::time::precise_time_ns;
+use std::comm::{ChanOne, oneshot};
+use extra::time::precise_time_ns;
 
 enum LayoutMsg {
     GetBoundingClientRect(ChanOne<int>),
@@ -10,11 +10,8 @@ enum LayoutMsg {
 
 static NUM_CALLS: uint = 50000;
 
-#[start]
-fn start(argc: int, argv: **u8, crate_map: *u8) -> int {
-    do core::rt::start(argc, argv, crate_map) {
-        run_test();
-    }
+fn main() {
+    run_test();
 }
 
 fn run_test() {
@@ -56,7 +53,7 @@ fn get_bounding_client_rect() -> int {
 #[inline(always)]
 fn time(desc: &str, f: &fn()) {
     let start = precise_time_ns();
-    for NUM_CALLS.times {
+    do NUM_CALLS.times {
         f();
     }
     let end = precise_time_ns();
